@@ -9,10 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
-#[Fillable(['name', 'description'])]
+#[Fillable(['name', 'description', 'start_date', 'deadline'])]
 class Project extends Model
 {
     use HasUuids;
+
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'date',
+            'deadline' => 'date',
+        ];
+    }
 
     protected static function booted(): void
     {

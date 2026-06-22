@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
@@ -18,7 +19,7 @@ class ProjectController extends Controller
         $user = Auth::user();
 
         $query = match (true) {
-            $user->hasRole('project_owner') => $user->ownedProjects()->getQuery(),
+            $user->hasRole(UserRole::ProjectOwner->value) => $user->ownedProjects()->getQuery(),
             default => Project::query(),
         };
 

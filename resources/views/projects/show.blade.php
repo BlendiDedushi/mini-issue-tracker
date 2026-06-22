@@ -43,21 +43,29 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Issues') }}</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('Issues') }}</h3>
+                        @can('create', App\Models\Issue::class)
+                            <a href="{{ route('issues.create', ['project' => $project->id]) }}"
+                               class="text-sm text-indigo-600 hover:text-indigo-800">
+                                {{ __('+ New Issue') }}
+                            </a>
+                        @endcan
+                    </div>
 
                     @if ($project->issues->isEmpty())
                         <p class="text-sm text-gray-600">{{ __('No issues yet.') }}</p>
                     @else
                         <ul class="divide-y divide-gray-200">
                             @foreach ($project->issues as $issue)
-                                <li class="py-3 flex items-center justify-between gap-4">
-                                    <div>
+                                <li class="py-3">
+                                    <a href="{{ route('issues.show', $issue) }}" class="block hover:text-indigo-600">
                                         <p class="font-medium text-gray-900">{{ $issue->title }}</p>
                                         <p class="text-sm text-gray-500">
                                             {{ ucfirst(str_replace('_', ' ', $issue->status->value)) }}
                                             · {{ ucfirst($issue->priority->value) }}
                                         </p>
-                                    </div>
+                                    </a>
                                 </li>
                             @endforeach
                         </ul>

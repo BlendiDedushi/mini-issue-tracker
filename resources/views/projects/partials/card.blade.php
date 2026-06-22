@@ -9,7 +9,7 @@
                     {{ $project->description }}
                 </p>
             </div>
-            <span class="shrink-0 inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+            <span class="shrink-0 inline-flex items-center font-bold underline px-2.5 py-0.5 text-xs text-gray-800">
                 {{ $project->issues_count }} {{ Str::plural('issue', $project->issues_count) }}
             </span>
         </div>

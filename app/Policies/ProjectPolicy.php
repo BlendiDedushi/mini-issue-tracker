@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Project;
 use App\Models\User;
 
@@ -9,7 +10,7 @@ class ProjectPolicy
 {
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->hasRole('admin')) {
+        if ($user->hasRole(UserRole::Admin->value)) {
             return true;
         }
 
@@ -28,7 +29,7 @@ class ProjectPolicy
 
     public function create(User $user): bool
     {
-        return $user->hasRole('project_owner');
+        return $user->hasRole(UserRole::ProjectOwner->value);
     }
 
     public function update(User $user, Project $project): bool

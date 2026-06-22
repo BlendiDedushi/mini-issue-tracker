@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -9,8 +10,8 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
-        Role::findOrCreate('admin');
-        Role::findOrCreate('project_owner');
-        Role::findOrCreate('member');
+        foreach (UserRole::cases() as $role) {
+            Role::findOrCreate($role->value);
+        }
     }
 }

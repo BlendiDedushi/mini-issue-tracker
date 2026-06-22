@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -11,7 +12,7 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->seedUser('admin@test.com', 'System Admin', 'admin');
+        $this->seedUser('admin@test.com', 'System Admin', UserRole::Admin);
 
         $owners = [
             ['email' => 'owner@test.com', 'name' => 'Project Owner'],
@@ -20,7 +21,7 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($owners as $ownerData) {
-            $owner = $this->seedUser($ownerData['email'], $ownerData['name'], 'project_owner');
+            $owner = $this->seedUser($ownerData['email'], $ownerData['name'], UserRole::ProjectOwner);
             $this->seedProjectsForOwner($owner);
         }
 
@@ -29,11 +30,11 @@ class UserSeeder extends Seeder
             ['email' => 'alex@test.com', 'name' => 'Alex Nguyen'],
             ['email' => 'sam@test.com', 'name' => 'Sam Patel'],
         ] as $memberData) {
-            $this->seedUser($memberData['email'], $memberData['name'], 'member');
+            $this->seedUser($memberData['email'], $memberData['name'], UserRole::Member);
         }
     }
 
-    private function seedUser(string $email, string $name, string $role): User
+    private function seedUser(string $email, string $name, UserRole $role): User
     {
         $user = User::firstOrCreate(
             ['email' => $email],
@@ -43,7 +44,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        $user->assignRole($role);
+        $user->assignRole($role->value);
 
         return $user;
     }

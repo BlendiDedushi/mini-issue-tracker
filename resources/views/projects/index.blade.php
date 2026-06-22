@@ -1,8 +1,10 @@
+@use('App\Enums\UserRole')
+
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                @if (Auth::user()->hasRole('project_owner'))
+                @if (Auth::user()->hasRole(UserRole::ProjectOwner->value))
                     {{ __('Your Projects') }}
                 @else
                     {{ __('Projects') }}
@@ -35,7 +37,7 @@
                     @foreach ($projects as $project)
                         @include('projects.partials.card', [
                             'project' => $project,
-                            'showOwner' => ! Auth::user()->hasRole('project_owner'),
+                            'showOwner' => ! Auth::user()->hasRole(UserRole::ProjectOwner->value),
                         ])
                     @endforeach
                 </div>

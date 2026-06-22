@@ -9,6 +9,7 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
+        Role::findOrCreate('admin');
         Role::findOrCreate('project_manager');
         Role::findOrCreate('member');
     }

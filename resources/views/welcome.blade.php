@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ config('app.name', 'Mini Issue Tracker') }}</title>
+        <title>{{ config('app.name') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -15,7 +15,7 @@
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 px-4">
             <div class="w-full sm:max-w-md px-8 py-10 bg-white shadow-md overflow-hidden sm:rounded-lg text-center">
                 <h1 class="text-xl font-semibold text-gray-800 leading-tight">
-                    {{ __('Mini Issue Tracker') }}
+                    {{ config('app.name') }}
                 </h1>
                 <p class="mt-3 text-sm text-gray-600 leading-relaxed">
                     {{ __('Manage projects, issues, tags, and comments with your team.') }}

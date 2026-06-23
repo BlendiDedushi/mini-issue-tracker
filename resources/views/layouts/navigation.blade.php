@@ -1,3 +1,5 @@
+@use('App\Enums\UserRole')
+
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,6 +23,11 @@
                     <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
                         {{ __('Tags') }}
                     </x-nav-link>
+                    @if (Auth::user()->hasRole(UserRole::Member->value))
+                        <x-nav-link :href="route('assignments.index')" :active="request()->routeIs('assignments.*')">
+                            {{ __('My Assignments') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -77,6 +84,11 @@
             <x-responsive-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
                 {{ __('Tags') }}
             </x-responsive-nav-link>
+            @if (Auth::user()->hasRole(UserRole::Member->value))
+                <x-responsive-nav-link :href="route('assignments.index')" :active="request()->routeIs('assignments.*')">
+                    {{ __('My Assignments') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

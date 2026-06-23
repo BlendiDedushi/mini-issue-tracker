@@ -15,26 +15,35 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div
+            class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6"
+            x-data="{
+                search: @js($filters['search'] ?? ''),
+                loading: false,
+                debounceTimer: null,
+                async fetchResults() {
+                    this.loading = true;
+                    const params = new URLSearchParams(new FormData(this.$refs.filterForm));
+                    const response = await fetch(`{{ route('issues.index') }}?${params.toString()}`, {
+                        headers: { 'Accept': 'application/json' },
+                    });
+                    const data = await response.json();
+                    this.$refs.results.innerHTML = data.html;
+                    this.loading = false;
+                },
+                onSearchInput() {
+                    clearTimeout(this.debounceTimer);
+                    this.debounceTimer = setTimeout(() => this.fetchResults(), 300);
+                },
+            }"
+        >
             @include('issues.partials.filters')
 
-            @if ($issues->isEmpty())
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-600">
-                        {{ __('No issues found.') }}
-                    </div>
-                </div>
-            @else
-                <div class="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0 lg:grid-cols-3">
-                    @foreach ($issues as $issue)
-                        @include('issues.partials.card', ['issue' => $issue])
-                    @endforeach
-                </div>
+            <p x-show="loading" x-cloak class="text-sm text-gray-500">{{ __('Searching...') }}</p>
 
-                <div class="mt-8">
-                    {{ $issues->links() }}
-                </div>
-            @endif
+            <div x-ref="results">
+                @include('issues.partials.results')
+            </div>
         </div>
     </div>
 </x-app-layout>

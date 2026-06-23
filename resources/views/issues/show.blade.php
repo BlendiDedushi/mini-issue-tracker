@@ -49,6 +49,8 @@
 
             @include('issues.partials.tags')
 
+            @include('issues.partials.members')
+
             @include('issues.partials.comments')
 
             <div class="flex items-center justify-between">

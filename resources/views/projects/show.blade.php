@@ -66,6 +66,21 @@
                                             · {{ ucfirst($issue->priority->value) }}
                                         </p>
                                     </a>
+                                    @if ($issue->members->isNotEmpty())
+                                        <div class="mt-2 flex flex-wrap items-center gap-2">
+                                            @foreach ($issue->members->take(4) as $member)
+                                                <x-member-avatar :member="$member" />
+                                            @endforeach
+                                            @if ($issue->members->count() > 4)
+                                                <span
+                                                    class="flex h-10 w-10 min-h-[2.5rem] min-w-[2.5rem] shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold leading-none text-gray-600"
+                                                    title="{{ $issue->members->skip(4)->pluck('name')->join(', ') }}"
+                                                >
+                                                    +{{ $issue->members->count() - 4 }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </li>
                             @endforeach
                         </ul>

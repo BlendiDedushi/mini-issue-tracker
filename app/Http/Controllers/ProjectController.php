@@ -50,7 +50,7 @@ class ProjectController extends Controller
     {
         $this->authorize('view', $project);
 
-        $project->load(['owner', 'issues']);
+        $project->load(['owner', 'issues.members']);
 
         return view('projects.show', compact('project'));
     }

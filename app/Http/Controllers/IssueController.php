@@ -10,36 +10,37 @@ use App\Http\Requests\UpdateIssueRequest;
 use App\Models\Issue;
 use App\Models\Project;
 use App\Models\Tag;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class IssueController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|JsonResponse
     {
         $this->authorize('viewAny', Issue::class);
 
-        $issues = Issue::query()
-            ->with(['project.owner', 'tags'])
-            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
-            ->when($request->filled('priority'), fn ($query) => $query->where('priority', $request->string('priority')))
-            ->when($request->filled('tag'), fn ($query) => $query->whereHas(
-                'tags',
-                fn ($tagQuery) => $tagQuery->where('tags.id', $request->string('tag'))
-            ))
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();
+        $issues = $this->filteredIssues($request);
 
-        return view('issues.index', [
+        $data = [
             'issues' => $issues,
             'tags' => Tag::query()->orderBy('name')->get(),
             'statuses' => IssueStatus::cases(),
             'priorities' => IssuePriority::cases(),
-            'filters' => $request->only(['status', 'priority', 'tag']),
-        ]);
+            'filters' => $request->only(['status', 'priority', 'tag', 'search']),
+        ];
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'html' => view('issues.partials.results', ['issues' => $issues])->render(),
+            ]);
+        }
+
+        return view('issues.index', $data);
     }
 
     public function create(Request $request): View
@@ -65,11 +66,12 @@ class IssueController extends Controller
     {
         $this->authorize('view', $issue);
 
-        $issue->load(['project.owner', 'tags']);
+        $issue->load(['project.owner', 'tags', 'members']);
 
         return view('issues.show', [
             'issue' => $issue,
             'allTags' => Tag::query()->orderBy('name')->get(),
+            'assignableMembers' => User::role(UserRole::Member->value)->orderBy('name')->get(),
         ]);
     }
 
@@ -111,5 +113,28 @@ class IssueController extends Controller
         };
 
         return $query->orderBy('name')->get();
+    }
+
+    private function filteredIssues(Request $request): LengthAwarePaginator
+    {
+        return Issue::query()
+            ->with(['project.owner', 'tags'])
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->when($request->filled('priority'), fn ($query) => $query->where('priority', $request->string('priority')))
+            ->when($request->filled('tag'), fn ($query) => $query->whereHas(
+                'tags',
+                fn ($tagQuery) => $tagQuery->where('tags.id', $request->string('tag'))
+            ))
+            ->when($request->filled('search'), function ($query) use ($request): void {
+                $term = '%'.$request->string('search').'%';
+
+                $query->where(function ($searchQuery) use ($term): void {
+                    $searchQuery->where('title', 'like', $term)
+                        ->orWhere('description', 'like', $term);
+                });
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
     }
 }

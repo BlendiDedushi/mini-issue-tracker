@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\IssueCommentController;
 use App\Http\Controllers\IssueController;
+use App\Http\Controllers\IssueMemberController;
 use App\Http\Controllers\IssueTagController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -24,6 +26,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('issues/{issue}/comments', [IssueCommentController::class, 'index'])->name('issues.comments.index');
     Route::post('issues/{issue}/comments', [IssueCommentController::class, 'store'])->name('issues.comments.store');
+
+    Route::post('issues/{issue}/members/{user}', [IssueMemberController::class, 'store'])->name('issues.members.attach');
+    Route::delete('issues/{issue}/members/{user}', [IssueMemberController::class, 'destroy'])->name('issues.members.detach');
+
+    Route::get('my-assignments', [AssignmentController::class, 'index'])->name('assignments.index');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

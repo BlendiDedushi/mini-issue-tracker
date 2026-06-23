@@ -47,4 +47,9 @@ class Issue extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

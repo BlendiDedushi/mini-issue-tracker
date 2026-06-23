@@ -1,4 +1,22 @@
-<form method="GET" action="{{ route('issues.index') }}" class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+<form
+    x-ref="filterForm"
+    method="GET"
+    action="{{ route('issues.index') }}"
+    class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 space-y-4"
+>
+    <div>
+        <x-input-label for="search" :value="__('Search')" />
+        <x-text-input
+            id="search"
+            name="search"
+            type="search"
+            class="mt-1 block w-full"
+            placeholder="{{ __('Search by title or description...') }}"
+            x-model="search"
+            x-on:input="onSearchInput()"
+        />
+    </div>
+
     <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div>
             <x-input-label for="status" :value="__('Status')" />

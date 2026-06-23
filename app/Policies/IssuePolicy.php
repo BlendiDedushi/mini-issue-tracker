@@ -19,12 +19,16 @@ class IssuePolicy
 
     public function create(User $user): bool
     {
-        return true;
+        return $user->ownedProjects()->exists();
     }
 
     public function update(User $user, Issue $issue): bool
     {
-        return true;
+        if ($issue->project->owner_id === $user->id) {
+            return true;
+        }
+
+        return $issue->members()->whereKey($user->id)->exists();
     }
 
     public function delete(User $user, Issue $issue): bool
@@ -33,6 +37,11 @@ class IssuePolicy
     }
 
     public function manageMembers(User $user, Issue $issue): bool
+    {
+        return $issue->project->owner_id === $user->id;
+    }
+
+    public function manageTags(User $user, Issue $issue): bool
     {
         return $issue->project->owner_id === $user->id;
     }

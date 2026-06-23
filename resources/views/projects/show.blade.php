@@ -45,7 +45,7 @@
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900">{{ __('Issues') }}</h3>
-                        @can('create', App\Models\Issue::class)
+                        @can('update', $project)
                             <a href="{{ route('issues.create', ['project' => $project->id]) }}"
                                class="text-sm text-indigo-600 hover:text-indigo-800">
                                 {{ __('+ New Issue') }}

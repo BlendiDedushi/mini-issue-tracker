@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         if (Auth::user()->hasRole(UserRole::Admin->value)) {
             return redirect()->route('admin.users.index');

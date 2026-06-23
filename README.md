@@ -86,7 +86,7 @@ New registrations are assigned the **member** role by default.
 
 - **Admin** — manages user roles via the Users page. Cannot access projects, issues, or tags.
 - **Project owner** — creates and manages their own projects and issues. Can assign members to issues, manage tags on issues, and delete issues they own.
-- **Member** — browses projects and issues, adds comments, and views **My Assignments** for issues they are assigned to. Cannot assign or remove issue members.
+- **Member** — browses projects and issues, edits issues they are assigned to, adds comments, and views **My Assignments**. Cannot create issues, manage tags, or assign members.
 
 ## Features
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Issue;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCommentRequest extends FormRequest
@@ -15,7 +14,6 @@ class StoreCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'author_name' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
         ];
     }

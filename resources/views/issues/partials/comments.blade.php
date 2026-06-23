@@ -9,7 +9,6 @@
         submitting: false,
         errors: {},
         formError: '',
-        authorName: @js(auth()->user()->name),
         body: '',
         issueId: @js($issue->id),
         csrfToken: document.querySelector('meta[name=csrf-token]').content,
@@ -70,7 +69,6 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    author_name: this.authorName,
                     body: this.body,
                 }),
             });
@@ -99,20 +97,6 @@
 
         <form x-on:submit.prevent="submitComment()" class="mb-6 space-y-4 border-b border-gray-200 pb-6">
             <p x-show="formError" x-text="formError" class="text-sm text-red-600" x-cloak></p>
-
-            <div>
-                <x-input-label for="author_name" :value="__('Author name')" />
-                <x-text-input
-                    id="author_name"
-                    type="text"
-                    class="mt-1 block w-full bg-gray-50"
-                    x-model="authorName"
-                    readonly
-                />
-                <template x-if="errors.author_name">
-                    <p class="mt-2 text-sm text-red-600" x-text="errors.author_name[0]"></p>
-                </template>
-            </div>
 
             <div>
                 <x-input-label for="body" :value="__('Comment')" />

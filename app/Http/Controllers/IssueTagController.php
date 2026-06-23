@@ -10,7 +10,7 @@ class IssueTagController extends Controller
 {
     public function store(Issue $issue, Tag $tag): JsonResponse
     {
-        $this->authorize('view', $issue);
+        $this->authorize('manageTags', $issue);
 
         if ($issue->tags()->whereKey($tag->id)->exists()) {
             return response()->json(['message' => __('Tag is already attached.')], 422);
@@ -25,7 +25,7 @@ class IssueTagController extends Controller
 
     public function destroy(Issue $issue, Tag $tag): JsonResponse
     {
-        $this->authorize('view', $issue);
+        $this->authorize('manageTags', $issue);
 
         $issue->tags()->detach($tag);
 

@@ -30,7 +30,10 @@ class IssueCommentController extends Controller
 
     public function store(StoreCommentRequest $request, Issue $issue): JsonResponse
     {
-        $comment = $issue->comments()->create($request->validated());
+        $comment = $issue->comments()->create([
+            'body' => $request->validated('body'),
+            'author_name' => $request->user()->name,
+        ]);
 
         return response()->json([
             'comment' => $this->formatComment($comment),

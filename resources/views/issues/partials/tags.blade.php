@@ -13,6 +13,7 @@
         ])->values()),
         error: '',
         issueId: @js($issue->id),
+        canManageTags: @js(auth()->user()->can('manageTags', $issue)),
         csrfToken: document.querySelector('meta[name=csrf-token]').content,
         get unattachedTags() {
             const attachedIds = new Set(this.tags.map(tag => tag.id));
@@ -56,14 +57,16 @@
     <div class="p-6">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">{{ __('Tags') }}</h3>
-            <button
-                type="button"
-                class="text-sm text-indigo-600 hover:text-indigo-800"
-                x-on:click="$dispatch('open-modal', 'attach-tag')"
-                x-show="unattachedTags.length > 0"
-            >
-                {{ __('+ Attach tag') }}
-            </button>
+            @can('manageTags', $issue)
+                <button
+                    type="button"
+                    class="text-sm text-indigo-600 hover:text-indigo-800"
+                    x-on:click="$dispatch('open-modal', 'attach-tag')"
+                    x-show="unattachedTags.length > 0"
+                >
+                    {{ __('+ Attach tag') }}
+                </button>
+            @endcan
         </div>
 
         <p x-show="error" x-text="error" class="mb-3 text-sm text-red-600" x-cloak></p>
@@ -82,6 +85,7 @@
                     <button
                         type="button"
                         class="text-xl leading-none hover:text-gray-200"
+                        x-show="canManageTags"
                         x-on:click="detach(tag.id)"
                         :aria-label="`{{ __('Remove') }} ${tag.name}`"
                     >&times;</button>
@@ -90,6 +94,7 @@
         </div>
     </div>
 
+    @can('manageTags', $issue)
     <x-modal name="attach-tag" focusable>
         <div class="p-6">
             <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Attach a tag') }}</h3>
@@ -119,4 +124,5 @@
             </div>
         </div>
     </x-modal>
+    @endcan
 </div>

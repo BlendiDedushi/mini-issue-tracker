@@ -7,24 +7,24 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <form method="POST" action="{{ route('issues.store') }}" class="p-6 space-y-6">
-                        @csrf
+            <x-form-card max-width="3xl">
+                <form method="POST" action="{{ route('issues.store') }}" class="divide-y divide-gray-200">
+                    @csrf
 
+                    <div class="space-y-8 p-6">
                         @include('issues.partials.form', [
                             'selectedProjectId' => $selectedProjectId,
                         ])
+                    </div>
 
-                        <div class="flex items-center justify-between">
-                            <a href="{{ route('issues.index') }}" class="text-sm text-gray-600 hover:text-gray-900">
-                                {{ __('Cancel') }}
-                            </a>
-                            <x-primary-button>{{ __('Create Issue') }}</x-primary-button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                    <div class="flex items-center justify-between gap-3 bg-gray-50 px-6 py-4">
+                        <a href="{{ route('issues.index') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">
+                            {{ __('Cancel') }}
+                        </a>
+                        <x-primary-button>{{ __('Create Issue') }}</x-primary-button>
+                    </div>
+                </form>
+            </x-form-card>
         </div>
     </div>
 </x-app-layout>

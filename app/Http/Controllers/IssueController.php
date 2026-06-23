@@ -8,7 +8,6 @@ use App\Enums\UserRole;
 use App\Http\Requests\StoreIssueRequest;
 use App\Http\Requests\UpdateIssueRequest;
 use App\Models\Issue;
-use App\Models\Project;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -81,7 +80,7 @@ class IssueController extends Controller
 
         return view('issues.edit', [
             'issue' => $issue,
-            'projects' => $this->availableProjects(),
+            'projects' => $this->availableProjects($issue),
             'statuses' => IssueStatus::cases(),
             'priorities' => IssuePriority::cases(),
         ]);
@@ -103,16 +102,21 @@ class IssueController extends Controller
         return redirect()->route('issues.index');
     }
 
-    private function availableProjects()
+    private function availableProjects(?Issue $issue = null)
     {
         $user = Auth::user();
 
-        $query = match (true) {
-            $user->hasRole(UserRole::ProjectOwner->value) => $user->ownedProjects()->getQuery(),
-            default => Project::query(),
-        };
+        $ownedProjects = $user->ownedProjects()->orderBy('name')->get();
 
-        return $query->orderBy('name')->get();
+        if ($ownedProjects->isNotEmpty()) {
+            return $ownedProjects;
+        }
+
+        if ($issue !== null) {
+            return collect([$issue->project]);
+        }
+
+        return collect();
     }
 
     private function filteredIssues(Request $request): LengthAwarePaginator

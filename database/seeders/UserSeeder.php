@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRole;
-use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -14,15 +13,12 @@ class UserSeeder extends Seeder
     {
         $this->seedUser('admin@test.com', 'System Admin', UserRole::Admin);
 
-        $owners = [
+        foreach ([
             ['email' => 'owner@test.com', 'name' => 'Project Owner'],
             ['email' => 'jane@test.com', 'name' => 'Jane Cooper'],
             ['email' => 'mark@test.com', 'name' => 'Mark Rivera'],
-        ];
-
-        foreach ($owners as $ownerData) {
-            $owner = $this->seedUser($ownerData['email'], $ownerData['name'], UserRole::ProjectOwner);
-            $this->seedProjectsForOwner($owner);
+        ] as $ownerData) {
+            $this->seedUser($ownerData['email'], $ownerData['name'], UserRole::ProjectOwner);
         }
 
         foreach ([
@@ -47,19 +43,5 @@ class UserSeeder extends Seeder
         $user->assignRole($role->value);
 
         return $user;
-    }
-
-    private function seedProjectsForOwner(User $owner, int $minCount = 15): void
-    {
-        $needed = max(0, $minCount - $owner->ownedProjects()->count());
-
-        if ($needed === 0) {
-            return;
-        }
-
-        Project::factory()
-            ->count($needed)
-            ->for($owner, 'owner')
-            ->create();
     }
 }

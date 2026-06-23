@@ -5,28 +5,27 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('projects.index') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
-
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.*')">
-                        {{ __('Projects') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('issues.index')" :active="request()->routeIs('issues.*')">
-                        {{ __('Issues') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
-                        {{ __('Tags') }}
-                    </x-nav-link>
-                    @if (Auth::user()->hasRole(UserRole::Member->value))
-                        <x-nav-link :href="route('assignments.index')" :active="request()->routeIs('assignments.*')">
-                            {{ __('My Assignments') }}
+                <div class="hidden space-x-8 sm:-my-px sm:flex">
+                    @if (Auth::user()->hasRole(UserRole::Admin->value))
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Users') }}
                         </x-nav-link>
+                    @else
+                        <x-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.*')">
+                            {{ __('Projects') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('issues.index')" :active="request()->routeIs('issues.*')">
+                            {{ __('Issues') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
+                            {{ __('Tags') }}
+                        </x-nav-link>
+                        @if (Auth::user()->hasRole(UserRole::Member->value))
+                            <x-nav-link :href="route('assignments.index')" :active="request()->routeIs('assignments.*')">
+                                {{ __('My Assignments') }}
+                            </x-nav-link>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -75,19 +74,25 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.*')">
-                {{ __('Projects') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('issues.index')" :active="request()->routeIs('issues.*')">
-                {{ __('Issues') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
-                {{ __('Tags') }}
-            </x-responsive-nav-link>
-            @if (Auth::user()->hasRole(UserRole::Member->value))
-                <x-responsive-nav-link :href="route('assignments.index')" :active="request()->routeIs('assignments.*')">
-                    {{ __('My Assignments') }}
+            @if (Auth::user()->hasRole(UserRole::Admin->value))
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                    {{ __('Users') }}
                 </x-responsive-nav-link>
+            @else
+                <x-responsive-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.*')">
+                    {{ __('Projects') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('issues.index')" :active="request()->routeIs('issues.*')">
+                    {{ __('Issues') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
+                    {{ __('Tags') }}
+                </x-responsive-nav-link>
+                @if (Auth::user()->hasRole(UserRole::Member->value))
+                    <x-responsive-nav-link :href="route('assignments.index')" :active="request()->routeIs('assignments.*')">
+                        {{ __('My Assignments') }}
+                    </x-responsive-nav-link>
+                @endif
             @endif
         </div>
 

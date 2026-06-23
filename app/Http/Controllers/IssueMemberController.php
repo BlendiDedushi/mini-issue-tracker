@@ -11,7 +11,7 @@ class IssueMemberController extends Controller
 {
     public function store(Issue $issue, User $user): JsonResponse
     {
-        $this->authorize('view', $issue);
+        $this->authorize('manageMembers', $issue);
 
         if (! $user->hasRole(UserRole::Member->value)) {
             return response()->json(['message' => __('Only members can be assigned to an issue.')], 422);
@@ -30,7 +30,7 @@ class IssueMemberController extends Controller
 
     public function destroy(Issue $issue, User $user): JsonResponse
     {
-        $this->authorize('view', $issue);
+        $this->authorize('manageMembers', $issue);
 
         $issue->members()->detach($user);
 

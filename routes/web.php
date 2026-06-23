@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\UserRole;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\IssueCommentController;
 use App\Http\Controllers\IssueController;
@@ -8,6 +10,7 @@ use App\Http\Controllers\IssueTagController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TagController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,26 +18,39 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', fn () => redirect()->route('projects.index'))->name('dashboard');
+    Route::get('/dashboard', function () {
+        if (Auth::user()->hasRole(UserRole::Admin->value)) {
+            return redirect()->route('admin.users.index');
+        }
 
-    Route::resource('projects', ProjectController::class);
-    Route::resource('issues', IssueController::class);
-    Route::resource('tags', TagController::class)->only(['index', 'create', 'store']);
+        return redirect()->route('projects.index');
+    })->name('dashboard');
 
-    Route::post('issues/{issue}/tags/{tag}', [IssueTagController::class, 'store'])->name('issues.tags.attach');
-    Route::delete('issues/{issue}/tags/{tag}', [IssueTagController::class, 'destroy'])->name('issues.tags.detach');
+    Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    });
 
-    Route::get('issues/{issue}/comments', [IssueCommentController::class, 'index'])->name('issues.comments.index');
-    Route::post('issues/{issue}/comments', [IssueCommentController::class, 'store'])->name('issues.comments.store');
+    Route::middleware('not.admin')->group(function () {
+        Route::resource('projects', ProjectController::class);
+        Route::resource('issues', IssueController::class);
+        Route::resource('tags', TagController::class)->only(['index', 'create', 'store']);
 
-    Route::post('issues/{issue}/members/{user}', [IssueMemberController::class, 'store'])->name('issues.members.attach');
-    Route::delete('issues/{issue}/members/{user}', [IssueMemberController::class, 'destroy'])->name('issues.members.detach');
+        Route::post('issues/{issue}/tags/{tag}', [IssueTagController::class, 'store'])->name('issues.tags.attach');
+        Route::delete('issues/{issue}/tags/{tag}', [IssueTagController::class, 'destroy'])->name('issues.tags.detach');
 
-    Route::get('my-assignments', [AssignmentController::class, 'index'])->name('assignments.index');
+        Route::get('issues/{issue}/comments', [IssueCommentController::class, 'index'])->name('issues.comments.index');
+        Route::post('issues/{issue}/comments', [IssueCommentController::class, 'store'])->name('issues.comments.store');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::post('issues/{issue}/members/{user}', [IssueMemberController::class, 'store'])->name('issues.members.attach');
+        Route::delete('issues/{issue}/members/{user}', [IssueMemberController::class, 'destroy'])->name('issues.members.detach');
+
+        Route::get('my-assignments', [AssignmentController::class, 'index'])->name('assignments.index');
+
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 });
 
 require __DIR__.'/auth.php';

@@ -8,15 +8,6 @@ use App\Models\User;
 
 class ProjectPolicy
 {
-    public function before(User $user, string $ability): ?bool
-    {
-        if ($user->hasRole(UserRole::Admin->value)) {
-            return true;
-        }
-
-        return null;
-    }
-
     public function viewAny(User $user): bool
     {
         return true;

@@ -13,6 +13,7 @@
         ])->values()),
         error: '',
         issueId: @js($issue->id),
+        canManageMembers: @js(auth()->user()->can('manageMembers', $issue)),
         csrfToken: document.querySelector('meta[name=csrf-token]').content,
         get unassignedMembers() {
             const assignedIds = new Set(this.members.map(member => member.id));
@@ -56,14 +57,16 @@
     <div class="p-6">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">{{ __('Members') }}</h3>
-            <button
-                type="button"
-                class="text-sm text-indigo-600 hover:text-indigo-800"
-                x-on:click="$dispatch('open-modal', 'attach-member')"
-                x-show="unassignedMembers.length > 0"
-            >
-                {{ __('+ Assign member') }}
-            </button>
+            @can('manageMembers', $issue)
+                <button
+                    type="button"
+                    class="text-sm text-indigo-600 hover:text-indigo-800"
+                    x-on:click="$dispatch('open-modal', 'attach-member')"
+                    x-show="unassignedMembers.length > 0"
+                >
+                    {{ __('+ Assign member') }}
+                </button>
+            @endcan
         </div>
 
         <p x-show="error" x-text="error" class="mb-3 text-sm text-red-600" x-cloak></p>
@@ -79,6 +82,7 @@
                     <button
                         type="button"
                         class="text-xl leading-none text-gray-500 hover:text-gray-700"
+                        x-show="canManageMembers"
                         x-on:click="detach(member.id)"
                         :aria-label="`{{ __('Remove') }} ${member.name}`"
                     >&times;</button>
@@ -87,6 +91,7 @@
         </div>
     </div>
 
+    @can('manageMembers', $issue)
     <x-modal name="attach-member" focusable>
         <div class="p-6">
             <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Assign a member') }}</h3>
@@ -117,4 +122,5 @@
             </div>
         </div>
     </x-modal>
+    @endcan
 </div>

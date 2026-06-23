@@ -17,7 +17,7 @@
         />
     </div>
 
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div>
             <x-input-label for="status" :value="__('Status')" />
             <select id="status" name="status"
@@ -56,12 +56,12 @@
                 @endforeach
             </select>
         </div>
+    </div>
 
-        <div class="flex items-center justify-between">
-            <x-primary-button>{{ __('Filter') }}</x-primary-button>
-            <a href="{{ route('issues.index') }}" class="text-sm text-gray-600 hover:text-gray-900">
-                {{ __('Clear') }}
-            </a>
-        </div>
+    <div class="flex items-center justify-center gap-4">
+        <x-primary-button>{{ __('Filter') }}</x-primary-button>
+        <a href="{{ route('issues.index') }}" class="text-sm text-gray-600 hover:text-gray-900">
+            {{ __('Clear') }}
+        </a>
     </div>
 </form>

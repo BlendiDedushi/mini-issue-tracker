@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\UserRole;
 use App\Models\Issue;
 use App\Models\User;
 
@@ -30,7 +29,11 @@ class IssuePolicy
 
     public function delete(User $user, Issue $issue): bool
     {
-        return $issue->project->owner_id === $user->id
-            || $user->hasRole(UserRole::Admin->value);
+        return $issue->project->owner_id === $user->id;
+    }
+
+    public function manageMembers(User $user, Issue $issue): bool
+    {
+        return $issue->project->owner_id === $user->id;
     }
 }

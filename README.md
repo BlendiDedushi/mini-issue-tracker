@@ -36,14 +36,17 @@ DB_PASSWORD=
 php artisan migrate --seed
 ```
 
-4. Build frontend assets (required — compiled assets are not committed):
+4. Build frontend assets (**required before starting the app** — compiled assets are not committed to the repository):
 
 ```bash
 npm install
 npm run build
 ```
 
-5. Start the application:
+> **Important:** You must run `npm run build` before `php artisan serve`.  
+> Without this step, the app will fail to load pages that use Vite assets (login, dashboard, projects, issues, etc.).
+
+5. Start the application (**only after** `npm run build`):
 
 ```bash
 php artisan serve
@@ -53,11 +56,14 @@ Visit [http://localhost:8000](http://localhost:8000).
 
 ### Quick setup script
 
-Alternatively, run the Composer setup script (migrations only — seed separately):
+Alternatively, run the Composer setup script (migrations only — seed separately), then build frontend assets **before** starting the server:
 
 ```bash
 composer run setup
 php artisan db:seed
+npm install
+npm run build
+php artisan serve
 ```
 
 For local development with Vite hot reload:

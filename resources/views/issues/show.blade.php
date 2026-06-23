@@ -47,6 +47,8 @@
                 </div>
             </div>
 
+            @include('issues.partials.tags')
+
             <div class="flex items-center justify-between">
                 <a href="{{ route('projects.show', $issue->project) }}" class="text-sm text-gray-600 hover:text-gray-900">
                     ← {{ __('Back to project') }}

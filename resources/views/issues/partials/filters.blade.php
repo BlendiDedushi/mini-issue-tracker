@@ -1,5 +1,5 @@
 <form method="GET" action="{{ route('issues.index') }}" class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div>
             <x-input-label for="status" :value="__('Status')" />
             <select id="status" name="status"
@@ -21,6 +21,19 @@
                 @foreach ($priorities as $priority)
                     <option value="{{ $priority->value }}" @selected(($filters['priority'] ?? '') === $priority->value)>
                         {{ ucfirst($priority->value) }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div>
+            <x-input-label for="tag" :value="__('Tag')" />
+            <select id="tag" name="tag"
+                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                <option value="">{{ __('All tags') }}</option>
+                @foreach ($tags as $tag)
+                    <option value="{{ $tag->id }}" @selected(($filters['tag'] ?? '') == $tag->id)>
+                        {{ $tag->name }}
                     </option>
                 @endforeach
             </select>

@@ -9,6 +9,7 @@ use App\Http\Requests\StoreIssueRequest;
 use App\Http\Requests\UpdateIssueRequest;
 use App\Models\Issue;
 use App\Models\Project;
+use App\Models\Tag;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,18 +22,23 @@ class IssueController extends Controller
         $this->authorize('viewAny', Issue::class);
 
         $issues = Issue::query()
-            ->with(['project.owner'])
+            ->with(['project.owner', 'tags'])
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
             ->when($request->filled('priority'), fn ($query) => $query->where('priority', $request->string('priority')))
+            ->when($request->filled('tag'), fn ($query) => $query->whereHas(
+                'tags',
+                fn ($tagQuery) => $tagQuery->where('tags.id', $request->string('tag'))
+            ))
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
         return view('issues.index', [
             'issues' => $issues,
+            'tags' => Tag::query()->orderBy('name')->get(),
             'statuses' => IssueStatus::cases(),
             'priorities' => IssuePriority::cases(),
-            'filters' => $request->only(['status', 'priority']),
+            'filters' => $request->only(['status', 'priority', 'tag']),
         ]);
     }
 
@@ -59,9 +65,12 @@ class IssueController extends Controller
     {
         $this->authorize('view', $issue);
 
-        $issue->load(['project.owner']);
+        $issue->load(['project.owner', 'tags']);
 
-        return view('issues.show', compact('issue'));
+        return view('issues.show', [
+            'issue' => $issue,
+            'allTags' => Tag::query()->orderBy('name')->get(),
+        ]);
     }
 
     public function edit(Issue $issue): View

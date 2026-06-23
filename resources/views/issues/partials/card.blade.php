@@ -21,5 +21,16 @@
             · {{ ucfirst(str_replace('_', ' ', $issue->status->value)) }}
             · {{ ucfirst($issue->priority->value) }}
         </p>
+
+        @if ($issue->tags->isNotEmpty())
+            <div class="mt-3 flex flex-wrap gap-2">
+                @foreach ($issue->tags as $tag)
+                    <span class="inline-flex items-center rounded-full px-4 py-1.5 text-sm font-medium text-white"
+                        style="background-color: {{ $tag->color ?? '#6b7280' }}">
+                        {{ $tag->name }}
+                    </span>
+                @endforeach
+            </div>
+        @endif
     </div>
 </a>
